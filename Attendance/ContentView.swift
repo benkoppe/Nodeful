@@ -9,12 +9,16 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State private var text = ""
+    @AppStorage("firstLaunch") var firstLaunch: Bool = true
+    
     var body: some View {
         NavigationView {
             MemberList()
         }
         .navigationViewStyle(.stack)
+        .sheet(isPresented: $firstLaunch) {
+            SetupView()
+        }
     }
 }
 

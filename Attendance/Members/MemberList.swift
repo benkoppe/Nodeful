@@ -43,122 +43,137 @@ struct MemberList: View {
     @State private var clear = false
     
     var memberDictionary: Dictionary<String, [Member]> {
-        if !chunksEnabled || yourChunk >= totalChunks {
-            if search == "" {
-                return memberArray.getFilteredDictionary(sortMode: sort, nameMode: nameMode, chunkMode: .none)
+        if !memberArray.isEmpty() {
+            if !chunksEnabled || yourChunk >= totalChunks {
+                if search == "" {
+                    return memberArray.getFilteredDictionary(sortMode: sort, nameMode: nameMode, chunkMode: .none)
+                } else {
+                    return memberArray.getFilteredDictionary(name: search, sortMode: sort, nameMode: nameMode, chunkMode: .none)
+                }
             } else {
-                return memberArray.getFilteredDictionary(name: search, sortMode: sort, nameMode: nameMode, chunkMode: .none)
+                let chunk = memberArray.makeChunks(count: totalChunks)[yourChunk]
+                if search == "" {
+                    return memberArray.getFilteredDictionary(sortMode: sort, nameMode: nameMode, chunkMode: .chunked(chunk))
+                } else {
+                    return memberArray.getFilteredDictionary(name: search, sortMode: sort, nameMode: nameMode, chunkMode: .chunked(chunk))
+                }
             }
         } else {
-            let chunk = memberArray.makeChunks(count: totalChunks)[yourChunk]
-            if search == "" {
-                return memberArray.getFilteredDictionary(sortMode: sort, nameMode: nameMode, chunkMode: .chunked(chunk))
-            } else {
-                return memberArray.getFilteredDictionary(name: search, sortMode: sort, nameMode: nameMode, chunkMode: .chunked(chunk))
-            }
+            return Dictionary<String, [Member]>()
         }
     }
     
     var body: some View {
         ScrollViewReader { proxy in
-            List {
-                ForEach(self.memberDictionary.keys.sorted(), id: \.self) { key in
-                    Section(header: Text(key)) {
-                        if let shortMemberArray = self.memberDictionary[key] {
-                            ForEach(shortMemberArray, id: \.self) { member in
-                                MemberItem(member: member, lastChange: $lastChange)
-                            }
-                        }
-                    }
-                    .id(key)
-                }
-            }
-            .searchable(text: $search, placement: UIDevice.current.userInterfaceIdiom == .pad ? .automatic : .navigationBarDrawer(displayMode: searchMode ? .always : .automatic))
-            .listStyle(.insetGrouped)
-            .alert("Are you sure?", isPresented: $clear) {
-                Button("Clear", role: .destructive) {
-                    memberArray.objectWillChange.send()
-                    memberArray.clearHere()
-                    memberArray.saveHere()
-                }
-            } message: {
-                Text("Do you really want to clear the attendance?")
-            }
-            .toolbar {
-                ToolbarItemGroup(placement: .bottomBar) {
-                    Button(role: .destructive) {
-                        clear = true
-                    } label: {
-                        Image(systemName: "trash")
-                            .foregroundColor(.red)
-                    }
-                    Button(action: {
-                        if let lastChange = lastChange {
-                            for member in memberArray.members {
-                                if member == lastChange {
-                                    withAnimation { member.isHere.toggle() }
-                                    self.lastChange = nil
+            if !memberArray.isEmpty() {
+                List {
+                    ForEach(self.memberDictionary.keys.sorted(), id: \.self) { key in
+                        Section(header: Text(key)) {
+                            if let shortMemberArray = self.memberDictionary[key] {
+                                ForEach(shortMemberArray, id: \.self) { member in
+                                    MemberItem(member: member, lastChange: $lastChange)
                                 }
                             }
                         }
-                    }) {
-                        Image(systemName: "arrow.uturn.backward")
-                    }
-                    .disabled(lastChange == nil)
-                    Spacer()
-                    Picker("Sort Mode", selection: $sort) {
-                        ForEach(SortModes.allCases, id: \.self) { value in
-                            switch value {
-                            case .none:
-                                Text("No Sort")
-                            case .here:
-                                Image(systemName: "checkmark.circle")
-                            case .notHere:
-                                Image(systemName: "xmark.circle")
-                            }
-                        }
-                    }
-                    .pickerStyle(.inline)
-                    .scaleEffect(0.8)
-                    Spacer()
-                    /*Menu {
-                        ForEach(self.memberDictionary.keys.sorted(), id: \.self) { key in
-                            Button(key) {
-                                withAnimation { proxy.scrollTo(key, anchor: .top) }
-                            }
-                        }
-                    } label: {
-                        Image(systemName: "arrow.down.to.line")
-                    }*/
-                    Toggle("Enable Splitting", isOn: $showChunks)
-                        .labelsHidden()
-                        .tint(.blue)
-                        .toggleStyle(.switch)
-                        .scaleEffect(0.9)
-                    if UIDevice.current.userInterfaceIdiom == .pad {
-                        Button(action: {
-                            submit = true
-                        }) {
-                            Text("Submit")
-                                .padding()
-                        }
-                        .disabled(memberArray.getHere().isEmpty)
+                        .id(key)
                     }
                 }
+                .searchable(text: $search, placement: UIDevice.current.userInterfaceIdiom == .pad ? .automatic : .navigationBarDrawer(displayMode: searchMode ? .always : .automatic))
+                .listStyle(.insetGrouped)
+                .alert("Are you sure?", isPresented: $clear) {
+                    Button("Clear", role: .destructive) {
+                        memberArray.objectWillChange.send()
+                        memberArray.clearHere()
+                        memberArray.saveHere()
+                    }
+                } message: {
+                    Text("Do you really want to clear the attendance?")
+                }
+                .toolbar {
+                    ToolbarItemGroup(placement: .bottomBar) {
+                        Button(role: .destructive) {
+                            clear = true
+                        } label: {
+                            Image(systemName: "trash")
+                                .foregroundColor(.red)
+                        }
+                        Button(action: {
+                            if let lastChange = lastChange {
+                                for member in memberArray.members {
+                                    if member == lastChange {
+                                        withAnimation { member.isHere.toggle() }
+                                        self.lastChange = nil
+                                    }
+                                }
+                            }
+                        }) {
+                            Image(systemName: "arrow.uturn.backward")
+                        }
+                        .disabled(lastChange == nil)
+                        Spacer()
+                        Picker("Sort Mode", selection: $sort) {
+                            ForEach(SortModes.allCases, id: \.self) { value in
+                                switch value {
+                                case .none:
+                                    Text("No Sort")
+                                case .here:
+                                    Image(systemName: "checkmark.circle")
+                                case .notHere:
+                                    Image(systemName: "xmark.circle")
+                                }
+                            }
+                        }
+                        .pickerStyle(.inline)
+                        .scaleEffect(0.8)
+                        Spacer()
+                        /*Menu {
+                         ForEach(self.memberDictionary.keys.sorted(), id: \.self) { key in
+                         Button(key) {
+                         withAnimation { proxy.scrollTo(key, anchor: .top) }
+                         }
+                         }
+                         } label: {
+                         Image(systemName: "arrow.down.to.line")
+                         }*/
+                        Toggle("Enable Splitting", isOn: $showChunks)
+                            .labelsHidden()
+                            .tint(.blue)
+                            .toggleStyle(.switch)
+                            .scaleEffect(0.9)
+                        if UIDevice.current.userInterfaceIdiom == .pad {
+                            Button(action: {
+                                submit = true
+                            }) {
+                                Text("Submit")
+                                    .padding()
+                            }
+                            .disabled(memberArray.getHere().isEmpty)
+                        }
+                    }
+                }
+            } else {
+                Text("No names yet. Use the settings button to start adding!")
+                    .italic()
+                    .padding()
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
             }
         }
         .navigationTitle("Members")
         .navigationBarTitleDisplayMode(.inline)
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.NameUpdate)) { _ in
+            memberArray.updateNames()
+        }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarLeading) {
                 NavigationLink(destination: SettingsView().environmentObject(memberArray)) {
                     Image(systemName: "gear")
                 }
-                if let url = URL(string: sheetURL) {
-                    Link(destination: url) {
-                        Image(systemName: "arrowshape.turn.up.forward")
-                    }
-                }
+//                if let url = URL(string: sheetURL) {
+//                    Link(destination: url) {
+//                        Image(systemName: "arrowshape.turn.up.forward")
+//                    }
+//                }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 if UIDevice.current.userInterfaceIdiom == .phone {
@@ -255,9 +270,9 @@ struct MemberList: View {
             
             var body: some View {
                 HStack {
-                    Text("\(member.grade)")
-                        .foregroundColor(.secondary)
-                        .padding(.trailing, 5)
+//                    Text("\(member.grade)")
+//                        .foregroundColor(.secondary)
+//                        .padding(.trailing, 5)
                     if UIDevice.current.userInterfaceIdiom == .pad {
                         Spacer()
                     }

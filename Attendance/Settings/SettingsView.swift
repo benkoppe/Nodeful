@@ -29,6 +29,9 @@ struct SettingsView: View {
                     SearchModePicker()
                 }
                 ColorSchemePicker()
+                NameBox()
+                UrlBox()
+                ResetAll()
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
@@ -218,6 +221,95 @@ struct SettingsView: View {
             } header: {
                 Text("Color Scheme")
             }
+        }
+    }
+    
+    struct NameBox: View {
+        @AppStorage("names") var names: [String] = []
+        @State private var inputNames: String = ""
+        
+        @FocusState private var isSelected: Bool
+        
+        var body: some View {
+            Section {
+                ZStack {
+                    if inputNames.isEmpty {
+                        TextEditor(text: .constant("Enter names here"))
+                            .foregroundColor(.secondary)
+                            .frame(height: 200)
+                            .disabled(true)
+                    }
+                    
+                    TextEditor(text: $inputNames)
+                        .onAppear {
+                            inputNames = names.joined(separator: "\n")
+                        }
+                        .disableAutocorrection(true)
+                        .keyboardType(.asciiCapable)
+                        .focused($isSelected)
+                        .onChange(of: inputNames) { newValue in
+                            names = newValue.components(separatedBy: "\n")
+                            NotificationCenter.default.post(name: NSNotification.NameUpdate, object: nil, userInfo: nil)
+                        }
+                        .frame(height: 200)
+                }
+            } header: {
+                HStack {
+                    Text("Names")
+                    Spacer()
+                    Button("Done") {
+                        isSelected = false
+                    }
+                    .disabled(!isSelected)
+                }
+            } footer: {
+                Text("All student names. Enter each name on a new line. Press 'save' to save changes. All names must have a first and last name!")
+            }
+        }
+    }
+    
+    struct UrlBox: View {
+        @AppStorage("url") var url: String = ""
+        
+        var body: some View {
+            Section {
+                TextField("Google URL", text: $url)
+                    .disableAutocorrection(true)
+                    .keyboardType(.asciiCapable)
+            } header: {
+                Text("Script URL")
+            } footer: {
+                Text("URL used by app for connected spreadsheet. The setup tutorial video can be accessed [here](https://www.google.com/)")
+            }
+        }
+    }
+    
+    struct ResetAll: View {
+        @Environment(\.dismiss) var dismiss
+        @State private var showWarning = false
+        
+        var body: some View {
+            Section {
+                Button("Permanently Reset Everything", role: .destructive) {
+                    showWarning = true
+                }
+            } header: {
+                Text("Reset Everything")
+            } footer: {
+                Text("This will erase all app content and restart.")
+            }
+            .alert("Are you sure?", isPresented: $showWarning, actions: {
+                Button("Cancel", role: .cancel) {}
+                Button("Reset", role: .destructive) {
+                    dismiss()
+                    let domain = Bundle.main.bundleIdentifier!
+                    UserDefaults.standard.removePersistentDomain(forName: domain)
+                    UserDefaults.standard.synchronize()
+                    print(Array(UserDefaults.standard.dictionaryRepresentation().keys).count)
+                }
+            }, message: {
+                Text("This action cannot be undone. Everything will be erased, including names and history.")
+            })
         }
     }
 }

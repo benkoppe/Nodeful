@@ -41,8 +41,8 @@ struct SubmitView: View {
                                 HStack {
                                     Text(member.name)
                                     Spacer()
-                                    Text("\(member.grade)")
-                                        .foregroundColor(.secondary)
+//                                    Text("\(member.grade)")
+//                                        .foregroundColor(.secondary)
                                 }
                             }
                         }

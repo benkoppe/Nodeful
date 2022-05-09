@@ -6,11 +6,11 @@
 //
 
 import Foundation
+import SwiftUI
 
 class Member: ObservableObject, Hashable, Identifiable, Comparable, Codable {
     @Published var firstName: String
     @Published var lastName: String
-    @Published var grade: Int
     @Published var isHere: Bool
     let id: UUID
     
@@ -21,10 +21,9 @@ class Member: ObservableObject, Hashable, Identifiable, Comparable, Codable {
         return lastName + ", " + firstName
     }
     
-    init(firstName: String, lastName: String, grade: Int) {
+    init(firstName: String, lastName: String) {
         self.firstName = firstName
         self.lastName = lastName
-        self.grade = grade
         self.isHere = false
         id = UUID()
     }
@@ -39,14 +38,13 @@ class Member: ObservableObject, Hashable, Identifiable, Comparable, Codable {
         hasher.combine(self.name)
     }
     enum CodingKeys: CodingKey {
-        case firstName, lastName, grade, isHere, id
+        case firstName, lastName, isHere, id
     }
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         firstName = try container.decode(String.self, forKey: .firstName)
         lastName = try container.decode(String.self, forKey: .lastName)
         
-        grade = try container.decode(Int.self, forKey: .grade)
         isHere = try container.decode(Bool.self, forKey: .isHere)
         id = try container.decode(UUID.self, forKey: .id)
     }
@@ -54,7 +52,6 @@ class Member: ObservableObject, Hashable, Identifiable, Comparable, Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(firstName, forKey: .firstName)
         try container.encode(lastName, forKey: .lastName)
-        try container.encode(grade, forKey: .grade)
         try container.encode(isHere, forKey: .isHere)
         try container.encode(id, forKey: .id)
     }
@@ -62,6 +59,9 @@ class Member: ObservableObject, Hashable, Identifiable, Comparable, Codable {
 
 class MemberArray: ObservableObject {
     @Published var members: [Member]
+    @AppStorage("url") var url: String = ""
+    
+    var names = [""]
     
     var memberDictionary: Dictionary<String, [Member]> {
         return Dictionary(grouping: members, by: { member in
@@ -75,19 +75,56 @@ class MemberArray: ObservableObject {
     init() {
         var memberArray: [Member] = []
         
-        for index in 0..<sophomoreLastNames.count {
-            memberArray.append(Member(firstName: sophomoreFirstNames[index], lastName: sophomoreLastNames[index], grade: 10))
-        }
-        for index in 0..<juniorLastNames.count {
-            memberArray.append(Member(firstName: juniorFirstNames[index], lastName: juniorLastNames[index], grade: 11))
-        }
-        for index in 0..<seniorLastNames.count {
-            memberArray.append(Member(firstName: seniorFirstNames[index], lastName: seniorLastNames[index], grade: 12))
+        let storedNames = getStoredNames()
+        names = storedNames
+        
+        for name in names {
+            var components = name.components(separatedBy: " ")
+            let fName = components.removeFirst()
+            let lName = components.joined(separator: " ")
+            
+            if fName != "" && lName != "" {
+                memberArray.append(Member(firstName: fName, lastName: lName))
+            }
         }
         
         memberArray.sort()
-        
         self.members = memberArray
+    }
+    
+    let getStoredNames: () -> [String] = {
+        let storedString = (UserDefaults.standard.string(forKey: "names") ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        var storedNames = Array<String>(rawValue: storedString) ?? []
+        storedNames = storedNames.filter({$0 != ""})
+        return storedNames
+    }
+    
+    func updateNames() {
+        let storedNames = getStoredNames()
+        guard !storedNames.isEmpty else { return }
+        names = storedNames
+        var memberArray: [Member] = []
+        
+        for name in names {
+            var components = name.components(separatedBy: " ")
+            let fName = components.removeFirst()
+            let lName = components.joined(separator: " ")
+            
+            if let oldMember = members.first( where: { $0.firstName == fName && $0.lastName == lName }) {
+                memberArray.append(oldMember)
+            } else {
+                if fName != "" && lName != "" {
+                    memberArray.append(Member(firstName: fName, lastName: lName))
+                }
+            }
+        }
+        
+        memberArray.sort()
+        self.members = memberArray
+    }
+    
+    func isEmpty() -> Bool {
+        return members.isEmpty
     }
     
     func saveHere() {
