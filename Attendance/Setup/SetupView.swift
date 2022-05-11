@@ -122,6 +122,8 @@ struct SetupView: View {
                 Spacer()
                 
                 HStack {
+                    let isDisabled = ( (inputNames.isEmpty || inputNames == placeholder) || url.isEmpty)
+                    
                     Spacer()
                     Button(action: {
                         NotificationCenter.default.post(name: NSNotification.NameUpdate, object: nil, userInfo: nil)
@@ -130,10 +132,13 @@ struct SetupView: View {
                         Text("Get Started \(Image(systemName: "chevron.down"))")
                             .foregroundColor(.white)
                             .padding()
-                            .background(Color.blue)
+                            .background(isDisabled ? Color.gray : Color.blue)
+                            .animation(.default, value: inputNames)
+                            .animation(.default, value: url)
                             .clipShape(Capsule())
                     }
                     .padding(.bottom, 50)
+                    .disabled(isDisabled)
                     Spacer()
                 }
             }
