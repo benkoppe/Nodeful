@@ -31,7 +31,7 @@ struct SetupView: View {
                     .font(.system(size: 60))
                     .bold()
                     .foregroundColor(.primary)
-                Text("This app requires a little setup. Please open [this video](https://www.google.com/) on a separate computer and follow its instructions.")
+                Text("This app requires a little setup. Please open [this video](https://benkoppe.netlify.app/nodeful/setup/) on a separate computer and follow its instructions.")
                     .italic()
                     .padding(.horizontal)
                     .padding(.vertical, 1)

@@ -213,9 +213,9 @@ struct SettingsView: View {
         var body: some View {
             Section {
                 Picker("Color Scheme", selection: $colorScheme) {
-                    Text("System").tag(Attendance.colorScheme.system)
-                    Text("Dark").tag(Attendance.colorScheme.dark)
-                    Text("Light").tag(Attendance.colorScheme.light)
+                    Text("System").tag(Nodeful.colorScheme.system)
+                    Text("Dark").tag(Nodeful.colorScheme.dark)
+                    Text("Light").tag(Nodeful.colorScheme.light)
                 }
                 .pickerStyle(.segmented)
             } header: {
@@ -279,7 +279,7 @@ struct SettingsView: View {
             } header: {
                 Text("Script URL")
             } footer: {
-                Text("URL used by app for connected spreadsheet. The setup tutorial video can be accessed [here](https://www.google.com/)")
+                Text("URL used by app for connected spreadsheet. The setup tutorial video can be accessed [here](https://benkoppe.netlify.app/nodeful/setup/)")
             }
         }
     }
