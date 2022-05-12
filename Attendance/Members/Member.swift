@@ -294,23 +294,41 @@ class MemberArray: ObservableObject {
     }
     
     func sendHere(completion: @escaping (Result<Data, SendError>) -> Void) {
-        let url = URL(string: url)
-        var request = URLRequest(url: url!)
-        request.httpMethod = "POST"
-        request.httpBody = getHereNames().joined(separator: ",").data(using: .utf8)
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let _ = error {
-                completion(.failure(.expectedError))
-            } else if let data = data {
-                completion(.success(data))
-            } else {
-                completion(.failure(.unexpectedError))
-            }
-        }.resume()
+        if let url = URL(string: url) {
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.httpBody = getHereNames().joined(separator: ",").data(using: .utf8)
+            
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                if let _ = error {
+                    completion(.failure(.expectedError))
+                } else if let data = data {
+                    completion(.success(data))
+                } else {
+                    completion(.failure(.unexpectedError))
+                }
+            }.resume()
+        } else {
+            completion(.failure(.badURL))
+        }
     }
 }
 
 enum SendError: Error {
-    case expectedError, unexpectedError, failedLoad
+    case expectedError, unexpectedError, failedLoad, badURL
+}
+
+extension SendError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .expectedError:
+            return "Unknown error. If this error persists, and you're certain your provided URL is correct, please contact the developer."
+        case .unexpectedError:
+            return "Unknown error. If this error persists, and you're certain your provided URL is correct, please contact the developer."
+        case .failedLoad:
+            return "Load failed. Please check your internet connection and URL and try again."
+        case .badURL:
+            return "Bad URL. Please check your set URL and try again."
+        }
+    }
 }

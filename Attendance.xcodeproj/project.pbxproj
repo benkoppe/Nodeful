@@ -522,7 +522,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.benk.nodeful;
+				PRODUCT_BUNDLE_IDENTIFIER = com.benkoppe.nodeful;
 				PRODUCT_NAME = Nodeful;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -553,7 +553,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.benk.nodeful;
+				PRODUCT_BUNDLE_IDENTIFIER = com.benkoppe.nodeful;
 				PRODUCT_NAME = Nodeful;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
