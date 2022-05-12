@@ -46,7 +46,7 @@
 
 /* Begin PBXFileReference section */
 		B50BAA9026FA528800F2A6A4 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
-		B52C638F26F50F6D00247C72 /* Attendance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Attendance.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B52C638F26F50F6D00247C72 /* Nodeful.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nodeful.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B52C639226F50F6D00247C72 /* AttendanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttendanceApp.swift; sourceTree = "<group>"; };
 		B52C639426F50F6D00247C72 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B52C639626F50F6E00247C72 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -106,7 +106,7 @@
 		B52C639026F50F6D00247C72 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B52C638F26F50F6D00247C72 /* Attendance.app */,
+				B52C638F26F50F6D00247C72 /* Nodeful.app */,
 				B52C639F26F50F6E00247C72 /* AttendanceTests.xctest */,
 				B52C63A926F50F6E00247C72 /* AttendanceUITests.xctest */,
 			);
@@ -219,7 +219,7 @@
 				B52C63C526F51EDC00247C72 /* Introspect */,
 			);
 			productName = Attendance;
-			productReference = B52C638F26F50F6D00247C72 /* Attendance.app */;
+			productReference = B52C638F26F50F6D00247C72 /* Nodeful.app */;
 			productType = "com.apple.product-type.application";
 		};
 		B52C639E26F50F6E00247C72 /* AttendanceTests */ = {
@@ -505,7 +505,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Attendance/Preview Content\"";
 				DEVELOPMENT_TEAM = T8PATWK92J;
 				ENABLE_PREVIEWS = YES;
@@ -521,9 +521,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5;
-				PRODUCT_BUNDLE_IDENTIFIER = com.benkoppe.attendance;
-				PRODUCT_NAME = Attendance;
+				MARKETING_VERSION = 1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.benkoppe.nodeful;
+				PRODUCT_NAME = Nodeful;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -536,7 +536,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Attendance/Preview Content\"";
 				DEVELOPMENT_TEAM = T8PATWK92J;
 				ENABLE_PREVIEWS = YES;
@@ -552,9 +552,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5;
-				PRODUCT_BUNDLE_IDENTIFIER = com.benkoppe.attendance;
-				PRODUCT_NAME = Attendance;
+				MARKETING_VERSION = 1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.benkoppe.nodeful;
+				PRODUCT_NAME = Nodeful;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
